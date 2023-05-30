@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container" >
+     
+        <div class="logout">
+            <button onclick="logout()" style="cursor: pointer; padding: 10px 30px; border-radius: 20px; background-color: #1C1F25; color: #fff; position: absolute; left: 10%; top: 8%;">logout</button>
+        </div>
+        <header>
+            <h1>Your Shopping Cart</h1>
+            <div class="shopping">
+                <img src="img/Shopping bag.png" alt="Shopping bag.png">
+                <span class="quantity">0</span>
+            </div>
+        </header>
+    </div>
+    <div class="box">
+        <div class="list"></div>
+    </div>
+    <div class="card">
+        <h1>card</h1>
+        <ul class="listcard"></ul>
+        <div class="checkout">
+            <div class="total">0</div>
+            <div class="closeshopping">Close</div>
+        </div>
+    </div>
+
+
+    <script text="java/script">
+        let openShopping = document.querySelector('.shopping');
+        let closeshopping = document.querySelector('.closeshopping');
+        let list = document.querySelector('.list');
+        let listcard = document.querySelector('.listcard');
+        let body = document.querySelector('body');
+        let total = document.querySelector('.total');
+        let quantity = document.querySelector('.quantity');
+
+        openShopping.addEventListener('click', () => {
+            body.classList.add('active');
+        })
+
+        closeshopping.addEventListener('click', () => {
+            body.classList.remove('active');
+        })
+
+        let products = [
+            {
+                id: 1,
+                name: 'Samosa',
+                img: 'Samosa.png',
+                price: '₹' + 70 + '/-'
+            },
+            {
+                id: 2,
+                name: 'Margherita',
+                img: 'Margherita.png',
+                price: '₹' + 500 + '/-'
+            },
+            {
+                id: 3,
+                name: 'burger',
+                img: 'burger.png',
+                price: '₹' + 80 + '/-'
+            },
+            {
+                id: 4,
+                name: 'Pasta',
+                img: 'Pasta.png',
+                price: '₹' + 150 + '/-'
+            },
+            {
+                id: 5,
+                name: 'dosa',
+                img: 'dosa.png',
+                price: '₹' + 99 + '/-'
+            },
+            {
+                id: 6,
+                name: 'Idli Vada',
+                img: 'Idli Vada.png',
+                price: '₹' + 60 + '/-'
+            }
+        ];
+        let listcards = [];
+        function App() {
+            products.forEach((value, key) => {
+                let newDiv = document.createElement('div');
+                newDiv.classList.add('item');
+                newDiv.innerHTML = `
+                            <img src="img/${value.img}"/>
+                            <div class="title">${value.name}</div>
+                            <div class="price">${value.price.toLocaleString()}</div>
+                            <button class="button" onclick="addTocard(${key})">Add To Card </button>
+                        `
+                list.appendChild(newDiv);
+            })
+        };
+
+        App();
+
+        function addTocard(key) {
+            if (listcards[key] == null) {
+                // copy product form list to list card
+                listcards[key] = JSON.parse(JSON.stringify(products[key]));
+                listcards[key].quantity = 1;
+            }
+            reloadCard();
+        }
+
+        function reloadCard() {
+            listcard.innerHTML = '';
+            let count = 0;
+            let totalPrice = 0;
+            listcards.forEach((value, key) => {
+                totalPrice = totalPrice + value.price;
+                count = count + value.quantity;
+                if (value != null) {
+                    let newDiv = document.createElement('ul');
+
+                    newDiv.innerHTML = `
+                                        <div><img src="img/${value.img}"/></div>
+                                        <div>${value.name}</div>
+                                        <div>${value.price.toLocaleString()}</div>
+                                        <div style="display: flex;">
+                                            <button onclick="changeQuantity(${key}, ${value.quantity - 1})">-</button>
+                                            <div class="count" style="text-align: center;">${value.quantity}</div>
+                                            <button onclick="changeQuantity(${key}, ${value.quantity + 1})">+</button>
+                                        </div>
+                                    `;
+                    listcard.appendChild(newDiv);
+                }
+            })
+            total.innerText = totalPrice.toLocaleString();
+            quantity.innerText = count;
+        }
+
+        function changeQuantity(key, quantity) {
+            if (quantity == 0) {
+                delete listcards[key];
+            } else {
+                listcards[key].quantity = quantity;
+                listcards[key].price = quantity * products[key].price;
+            }
+            reloadCard();
+        }
+
+        const logout = () => {
+            localStorage.removeItem('checkUserLogin');
+            window.location.href = "signin.html";
+        }
+    </script>
+
+
+    <!-- <script src=" app.js"></script> -->
+</body>
+
+</html>
